@@ -25,13 +25,9 @@ function extractAllLink(html) {
     //console.log(fullLink);
 
     scorecardObj.ps(fullLink)
-
-
-
-  
   }
 }
 
-module.exports = {
-  getAllMatch: getAllMatchLink,
-};
+// module.exports = {
+//   getAllMatch: getAllMatchLink,
+// };

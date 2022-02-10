@@ -52,27 +52,25 @@ function extractMatchDetails(html) {
     opponentName = opponentName.split("INNINGS")[0].trim();
 
     // console.log(teamName, opponentName);
+
     let cInning = $(innings[i]);
 
-    let allRows = cInning.find(".table.batsman tbody tr");
+    let allRows = cInning.find(".table.batsman tbody tr");  // sari rows uthhai hn using tr
 
-    for (let j = 0; j < allRows.length; j++) {
-      let allCols = $(allRows[j]).find("td");
-      let isWorthy = $(allCols[0]).hasClass("batsman-cell");
+    for (let j = 0; j < allRows.length; j++) {  // loop tki hr ek ka sara data lepye
+      let allCols = $(allRows[j]).find("td");   // td hume ek player ka datya dega vhi kia h 
+      let isWorthy = $(allCols[0]).hasClass("batsman-cell");  // yh bas btyga true hai ya false
 
-      if (isWorthy == true) {
+      if (isWorthy == true) {  // check lgaya h ki agr batsman cell hai isme toh return krna vrna jrurt ni h iss data ki
         let playerName = $(allCols[0]).text().trim();
-
         let runs = $(allCols[2]).text().trim();
         let balls = $(allCols[3]).text().trim();
         let fours = $(allCols[5]).text().trim();
         let sixes = $(allCols[6]).text().trim();
         let STR = $(allCols[7]).text().trim();
 
-        console.log(
-          `${playerName} | ${runs} |${balls} | ${fours} | ${sixes} | ${STR}`
-        );
-        // Template Literal
+        
+        console.log(`${playerName} | ${runs} |${balls} | ${fours} | ${sixes} | ${STR}`);   // Template Literal
       }
     }
 
@@ -83,6 +81,6 @@ function extractMatchDetails(html) {
   //   console.log(htmlString);
 }
 
-module.exports ={
-  ps : processScoreCrad
-}
+// module.exports ={
+//   ps : processScoreCrad
+// }
