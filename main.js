@@ -1,7 +1,25 @@
+
 const url = 'https://www.espncricinfo.com/series/ipl-2020-21-1210595';
 
 const request = require('request');
 const cheerio = require('cheerio');
+
+const fs = require('fs');
+const path = require('path');
+
+const allMatchObj = require('./allMatch');
+
+let iplPath = path.join(__dirname , 'IPL')
+
+function dirCreator(filePath){
+    if(fs.existsSync(filePath)==false){
+        fs.mkdirSync(filePath)
+    }
+}
+
+// console.log(__dirname)  // yeh hume parent directory ka path dega
+
+dirCreator(iplPath)
 
 request(url,cb)
 
@@ -28,3 +46,4 @@ function extractLink(html){
 
     allMatchObj.getAllMatch(fullLink);
 }
+

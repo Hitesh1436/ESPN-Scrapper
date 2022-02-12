@@ -1,16 +1,23 @@
-let url =
-  "https://www.espncricinfo.com//series/ipl-2020-21-1210595/mumbai-indians-vs-chennai-super-kings-1st-match-1216492/full-scorecard";
+// let url =
+//   "https://www.espncricinfo.com//series/ipl-2020-21-1210595/mumbai-indians-vs-chennai-super-kings-1st-match-1216492/full-scorecard";
 
 const cheerio = require("cheerio");
 const request = require("request");
+const path = require('path');
+const fs = require('fs');
+const xlsx = require('xlsx');
 
-request(url, function (error, response, html) {
+function processScoreCrad(url) {
+  request(url, cb);
+}
+
+function cb(error, response, html) {
   if (error) {
     console.error(error);
   } else {
-    extractMatchDetails(html);  // fnc. bnya tki html mn se useful data store krwalee
+    extractMatchDetails(html);
   }
-});
+}
 
 function extractMatchDetails(html) {
   let $ = cheerio.load(html);    // $ isme load krwadia html ko ab
@@ -55,22 +62,25 @@ function extractMatchDetails(html) {
 
     let cInning = $(innings[i]);
 
-    let allRows = cInning.find(".table.batsman tbody tr");  // sari rows uthhai hn using tr
+    let allRows = cInning.find(".table.batsman tbody tr");
 
-    for (let j = 0; j < allRows.length; j++) {  // loop tki hr ek ka sara data lepye
-      let allCols = $(allRows[j]).find("td");   // td hume ek player ka datya dega vhi kia h 
-      let isWorthy = $(allCols[0]).hasClass("batsman-cell");  // yh bas btyga true hai ya false
+    for (let j = 0; j < allRows.length; j++) {
+      let allCols = $(allRows[j]).find("td");
+      let isWorthy = $(allCols[0]).hasClass("batsman-cell");
 
-      if (isWorthy == true) {  // check lgaya h ki agr batsman cell hai isme toh return krna vrna jrurt ni h iss data ki
+      if (isWorthy == true) {
         let playerName = $(allCols[0]).text().trim();
+
         let runs = $(allCols[2]).text().trim();
         let balls = $(allCols[3]).text().trim();
         let fours = $(allCols[5]).text().trim();
         let sixes = $(allCols[6]).text().trim();
         let STR = $(allCols[7]).text().trim();
 
-        
-        console.log(`${playerName} | ${runs} |${balls} | ${fours} | ${sixes} | ${STR}`);   // Template Literal
+        console.log(
+          `${playerName} | ${runs} |${balls} | ${fours} | ${sixes} | ${STR}`);  // Template Literal
+
+        processPlayer(teamName, opponentName, playerName, runs, balls, fours, sixes, STR, venue, date, result)
       }
     }
 
@@ -80,7 +90,50 @@ function extractMatchDetails(html) {
 
   //   console.log(htmlString);
 }
+  function processPlayer(teamName, opponentName, playerName, runs, balls, fours, sixes, STR, venue, date, result){
+    let teamPath = path.join(__dirname,'IPL',teamName)
+    dirCreator(teamPath);
 
-// module.exports ={
-//   ps : processScoreCrad
-// }
+   let filePath = path.join(teamPath,playerName+ '.xlsx')
+
+   let content = excelReader(filePath,playerName)
+
+   let playerObj = {teamName, opponentName, playerName, runs, balls, fours, sixes, STR, venue, date, result
+
+   };
+   content.push(playerObj)
+
+   excelWriter(filePath,playerName,content)
+
+  }
+
+  function dirCreator(folderPath){
+    if(fs.existsSync(folderPath)==false){
+        fs.mkdirSync(folderPath);
+    }
+}
+
+function excelWriter(fileName,sheetName,jsonData){   // excel write krega 
+  let newWB = xlsx.utils.book_new(); // creating a new workbook
+let newWS = xlsx.utils.json_to_sheet(jsonData);  // json is converted to sheet format (rows and columns)
+xlsx.utils.book_append_sheet(newWB, newWS, sheetName);
+xlsx.writeFile(newWB, fileName);
+}
+
+
+function excelReader(fileName,sheetName){   // excel ko json mn
+
+  if(fs.existsSync(fileName)==false){
+    return []
+  }
+let wb = xlsx.readFile(fileName);
+let excelData = wb.Sheets[sheetName];
+let ans = xlsx.utils.sheet_to_json(excelData);
+return ans
+}
+
+
+
+module.exports = {
+  ps: processScoreCrad
+}

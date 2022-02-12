@@ -1,11 +1,13 @@
 const fs = require("fs");
 
+const xlsx = require('xlsx');
+
 // let buffer = fs.readFileSync("./example.json");
 
 // //console.log(buffer)
 
 // let data = JSON.parse(buffer);
- // This methods is used to covert buffer or any type of  data to json
+// This methods is used to covert buffer or any type of  data to json
 
 
 
@@ -13,12 +15,12 @@ let jsonFile = require('./example.json') // requiring JSON File
 //console.log(data)
 
 jsonFile.push({
-  name: "Thor",
-  "last name": "Odinson",
+  Name: "Thor",
+  "Last Name": "Odinson",
   isAvenger: true,
-  friends: ["Tony", "Peter", "Bruce"],
-  age: 102,
-  address: {
+  Friends: ["Tony", "Peter", "Bruce"],
+  Age: 102,
+  Address: {
     planet: "Asgard",
   },
 });
@@ -37,3 +39,6 @@ fs.writeFileSync("example.json", stringData);
 // writing to json file
 
 console.log("JSON file Updated");
+
+
+
